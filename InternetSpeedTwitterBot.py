@@ -31,35 +31,49 @@ class InternetSpeedTwitterbot:
         self.down = int(upload_speed.text.split('.')[0])
 
     def tweet_at_provider(self, login_name, password, download, upload):
-        self.driver.get("https://x.com/")
+        try:
+            self.driver.get("https://x.com/")
 
-        sleep(2)
-        cookie_accept = self.driver.find_element(By.XPATH, '//span[contains(@class, "css-901oao") and text()="Accept all cookies"]')
-        cookie_accept.click()
+            sleep(2)
+            cookie_accept = self.driver.find_element(By.XPATH, '//span[contains(@class, "css-901oao") and text()="Accept all cookies"]')
+            cookie_accept.click()
 
-        sleep(2)
-        login_button = self.driver.find_element(By.XPATH, '//div[contains(@class, "css-901oao") and .//span[text()="Inloggen"]]')
-        login_button.click()
+            sleep(2)
+            login_button = self.driver.find_element(By.XPATH, '//div[contains(@class, "css-901oao") and .//span[text()="Inloggen"]]')
+            login_button.click()
 
-        sleep(3)
-        email_field = self.driver.find_element(By.CSS_SELECTOR,'input[name="text"][autocomplete="username"]')
-        email_field.send_keys(login_name)
-        email_field.send_keys(Keys.ENTER)
+            sleep(3)
+            email_field = self.driver.find_element(By.CSS_SELECTOR,'input[name="text"][autocomplete="username"]')
+            email_field.send_keys(login_name)
+            email_field.send_keys(Keys.ENTER)
 
-        sleep(3)
-        extra_username = self.driver.find_element(By.CSS_SELECTOR,'input[name="text"]')
-        extra_username.send_keys('LKnol12326752')
-        extra_username.send_keys(Keys.ENTER)
+        except NoSuchElementException as e:
+            print(f"Element not found: {e}")
+        except ElementNotInteractableException as e:
+            print(f"Element not interactable: {e}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
-        sleep(3)
-        password_field = self.driver.find_element(By.CSS_SELECTOR,'input[name="password"][autocomplete="current-password"]')
-        password_field.send_keys(password)
-        password_field.send_keys(Keys.ENTER)
+        else:
+            try:
+                # If there is an extra pop-up after email_field
+                sleep(3)
+                extra_username = self.driver.find_element(By.CSS_SELECTOR, 'input[name="text"]')
+                extra_username.send_keys('LKnol12326752')
+                extra_username.send_keys(Keys.ENTER)
+            except NoSuchElementException:
+                pass  # If the extra pop-up doesn't appear, continue without doing anything
 
-        sleep(3)
-        tweet = self.driver.find_element(By.CSS_SELECTOR, 'div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr')
-        tweet.send_keys(f'hello, my upload speed is {self.up} and my download speed is {self.down}, while it should be {download} download and {upload} upload )')
+            try:
+            sleep(3)
+            password_field = self.driver.find_element(By.CSS_SELECTOR,'input[name="password"][autocomplete="current-password"]')
+            password_field.send_keys(password)
+            password_field.send_keys(Keys.ENTER)
 
-        sleep(3)
-        post = self.driver.find_element(By.XPATH, '//span[@class="css-901oao css-16my406 r-poiln3 r-bcqeeo r-qvutc0" and text()="Post"]')
-        post.click()
+            sleep(3)
+            tweet = self.driver.find_element(By.CSS_SELECTOR, 'div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr')
+            tweet.send_keys(f'hello, my upload speed is {self.up} and my download speed is {self.down}, while it should be {download} download and {upload} upload )')
+
+            sleep(3)
+            post = self.driver.find_element(By.XPATH, '//span[@class="css-901oao css-16my406 r-poiln3 r-bcqeeo r-qvutc0" and text()="Post"]')
+            post.click()
